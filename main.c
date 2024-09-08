@@ -6,7 +6,7 @@
 
 #define WIDTH 19
 #define HEIGHT 18
-#define TICK_RATE_USEC 500000
+#define TICK_RATE_USEC 100000
 #define WALLCHAR '#'
 #define DOTVALUE 10
 
