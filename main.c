@@ -50,15 +50,6 @@ Entity ghosts[] = {
     {.x=9, .y=7, .symbol='G'},
     {.x=9, .y=7, .symbol='G'},
     {.x=9, .y=7, .symbol='G'},
-    {.x=9, .y=7, .symbol='G'},
-    {.x=9, .y=7, .symbol='G'},
-    {.x=9, .y=7, .symbol='G'},
-    {.x=9, .y=7, .symbol='G'},
-    {.x=9, .y=7, .symbol='G'},
-    {.x=9, .y=7, .symbol='G'},
-    {.x=9, .y=7, .symbol='G'},
-    {.x=9, .y=7, .symbol='G'},
-    {.x=9, .y=7, .symbol='G'},
 };
 
 void displayBoard() {
