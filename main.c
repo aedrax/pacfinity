@@ -10,8 +10,6 @@
 #define WALLCHAR '#'
 #define DOTVALUE 10
 
-unsigned int score = 0;
-
 char gameBoard[HEIGHT][WIDTH] = {
     "###################",
     "#........#........#",
@@ -135,12 +133,29 @@ bool checkForCollision() {
     return false;
 }
 
+void initializeColors() {
+    if (!has_colors()) {
+        return;
+    }
+
+    start_color();
+    init_pair(YELLOW, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(RED, COLOR_BLACK, COLOR_RED);
+    init_pair(PINK, COLOR_BLACK, COLOR_MAGENTA);
+    init_pair(CYAN, COLOR_BLACK, COLOR_CYAN);
+    init_pair(GREEN, COLOR_BLACK, COLOR_GREEN);
+    init_pair(BLUE, COLOR_WHITE, COLOR_BLUE);
+
+}
+
 int main() {
     initscr(); // Initialize the ncurses screen
     keypad(stdscr, TRUE); // Enable keyboard input for the window
     noecho(); // Don't echo pressed keys to the screen
     curs_set(FALSE); // Hide the default screen cursor
     nodelay(stdscr, TRUE); // Set getch to non-blocking mode
+    initializeColors();
+
 
     displayBoard();
     while (1) {
