@@ -33,6 +33,15 @@ char gameBoard[HEIGHT][WIDTH] = {
     "###################",
 };
 
+typedef enum COLOR {
+    YELLOW = 1,
+    RED = 2,
+    PINK = 3,
+    CYAN = 4,
+    GREEN = 5,
+    BLUE = 6,
+} COLOR;
+
 typedef struct {
     int x;
     int y;
