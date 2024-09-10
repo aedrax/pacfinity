@@ -9,6 +9,7 @@
 #define TICK_RATE_USEC 100000
 #define WALLCHAR '#'
 #define DOTVALUE 10
+#define NUM_GHOSTS 4
 
 char gameBoard[HEIGHT][WIDTH] = {
     "###################",
@@ -49,7 +50,7 @@ typedef struct {
 
 typedef struct {
     Entity pacman;
-    Entity ghosts[4];
+    Entity ghosts[NUM_GHOSTS];
     unsigned int score;
 } GameState;
 
@@ -173,6 +174,7 @@ void initializeColors() {
 }
 
 int main() {
+    // srand(time(NULL)); // Seed the random number generator
     initscr(); // Initialize the ncurses screen
     keypad(stdscr, TRUE); // Enable keyboard input for the window
     noecho(); // Don't echo pressed keys to the screen
