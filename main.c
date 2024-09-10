@@ -44,20 +44,33 @@ typedef struct {
     int x;
     int y;
     char symbol;
+    COLOR color;
 } Entity;
 
-Entity pacman = {
-    .x=9,
-    .y=9,
-    .symbol='P',
-};
+typedef struct {
+    Entity pacman;
+    Entity ghosts[4];
+    unsigned int score;
+} GameState;
 
-Entity ghosts[] = {
-    {.x=9, .y=7, .symbol='G'},
-    {.x=9, .y=7, .symbol='G'},
-    {.x=9, .y=7, .symbol='G'},
-    {.x=9, .y=7, .symbol='G'},
-};
+GameState* getGameState() {
+    static GameState gameState = {
+        .pacman = {.x=9, .y=9, .symbol='P', .color=YELLOW},
+        .ghosts = {
+            {.x=9, .y=7, .symbol='G', .color=RED},
+            {.x=9, .y=7, .symbol='G', .color=PINK},
+            {.x=9, .y=7, .symbol='G', .color=CYAN},
+            {.x=9, .y=7, .symbol='G', .color=GREEN},
+        },
+    };
+    return &gameState;
+}
+
+void drawEntity(const Entity* entity, COLOR color) {
+    attr_on(COLOR_PAIR(color), NULL);
+    mvaddch(entity->y, entity->x, entity->symbol);
+    attr_off(COLOR_PAIR(color), NULL);
+}
 
 void displayBoard() {
     clear(); // Clear the screen
@@ -66,16 +79,23 @@ void displayBoard() {
             mvaddch(i, j, gameBoard[i][j]);
         }
     }
-    mvaddch(pacman.y, pacman.x, pacman.symbol); // Draw Pacman
-    for (int i = 0; i < sizeof(ghosts) / sizeof(ghosts[0]); i++) {
-        mvaddch(ghosts[i].y, ghosts[i].x, ghosts[i].symbol); // Draw ghosts
+    GameState* gameState = getGameState();
+    Entity* pacman = &gameState->pacman;
+
+    drawEntity(pacman, pacman->color);
+
+    Entity* ghosts = gameState->ghosts;
+    for (int i = 0; i < sizeof(gameState->ghosts) / sizeof(ghosts[0]); i++) {
+        drawEntity(&ghosts[i], ghosts[i].color);
     }
     refresh(); // Refresh the screen to show changes
 }
 
 void movePacman(int ch) {
-    int newX = pacman.x;
-    int newY = pacman.y;
+    GameState* gameState = getGameState();
+    Entity* pacman = &gameState->pacman;
+    int newX = pacman->x;
+    int newY = pacman->y;
 
     switch (ch) {
         case KEY_UP: newY--; break;
@@ -89,19 +109,20 @@ void movePacman(int ch) {
     newY = (newY + HEIGHT) % HEIGHT; // Wrap around vertically
 
     if (gameBoard[newY][newX] != WALLCHAR) {
-        pacman.x = newX;
-        pacman.y = newY;
+        pacman->x = newX;
+        pacman->y = newY;
     }
     
     if (gameBoard[newY][newX] == '.') {
         gameBoard[newY][newX] = ' ';
-        score += DOTVALUE;
+        gameState->score += DOTVALUE;
     }
 }
 
 void moveGhosts() {
-
-    for (int i = 0; i < sizeof(ghosts) / sizeof(ghosts[0]); i++) {
+    GameState* gameState = getGameState();
+    Entity* ghosts = gameState->ghosts;
+    for (int i = 0; i < sizeof(gameState->ghosts) / sizeof(ghosts[0]); i++) {
         int newX = ghosts[i].x;
         int newY = ghosts[i].y;
 
@@ -125,8 +146,11 @@ void moveGhosts() {
 }
 
 bool checkForCollision() {
-    for (int i = 0; i < sizeof(ghosts) / sizeof(ghosts[0]); i++) {
-        if (ghosts[i].x == pacman.x && ghosts[i].y == pacman.y) {
+    GameState* gameState = getGameState();
+    Entity* pacman = &gameState->pacman;
+    Entity* ghosts = gameState->ghosts;
+    for (int i = 0; i < sizeof(gameState->ghosts) / sizeof(ghosts[0]); i++) {
+        if (ghosts[i].x == pacman->x && ghosts[i].y == pacman->y) {
             return true;
         }
     }
@@ -184,6 +208,7 @@ int main() {
     endwin(); // End ncurses mode
     // print the game over message
     printf("Game Over!\n");
-    printf("Score: %d\n", score);
+    GameState* gameState = getGameState();
+    printf("Score: %d\n", gameState->score);
     return 0;
 }
